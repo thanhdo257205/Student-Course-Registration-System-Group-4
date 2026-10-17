@@ -26,6 +26,9 @@ git push -u origin your-branch-name
 2. Run the whole script. It creates the `student_course_db` database with 4 tables
    (`users`, `students`, `courses`, `enrollments`) and a sample account `admin / admin123`.
 
+> **Warning:** Running `docs/database.sql` drops and recreates `student_course_db` if it
+> already exists. All existing data in that database will be permanently deleted.
+
 ### Connection configuration
 
 `src/main/resources/application.properties` reads its settings from environment variables.

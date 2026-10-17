@@ -1,6 +1,16 @@
--- Chay file nay trong SSMS / Azure Data Studio tren SQL Server
-IF DB_ID('student_course_db') IS NULL
-    CREATE DATABASE student_course_db;
+-- Chay file nay trong SSMS / Azure Data Studio tren SQL Server.
+-- CANH BAO: moi lan chay se xoa database student_course_db va toan bo du lieu hien co.
+USE master;
+GO
+
+IF DB_ID('student_course_db') IS NOT NULL
+BEGIN
+    ALTER DATABASE student_course_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE student_course_db;
+END
+GO
+
+CREATE DATABASE student_course_db;
 GO
 USE student_course_db;
 GO
