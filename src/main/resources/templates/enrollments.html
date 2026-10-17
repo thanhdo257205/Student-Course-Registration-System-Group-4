@@ -20,6 +20,13 @@
         </div>
         <div th:if="${successMessage}" class="notice notice-success" role="status" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="notice notice-error" role="alert" th:text="${errorMessage}"></div>
+        <form class="search-form" th:action="@{/enrollments}" method="get" role="search">
+            <label class="visually-hidden" for="enrollmentSearch">Search enrollments</label>
+            <input id="enrollmentSearch" type="search" name="q" th:value="${query}"
+                   placeholder="Search by student, course, or instructor" maxlength="100">
+            <button class="button button-secondary" type="submit">Search</button>
+            <a class="text-action" th:if="${!#strings.isEmpty(query)}" th:href="@{/enrollments}">Clear</a>
+        </form>
         <div class="table-wrap">
             <table>
                 <thead>
@@ -44,12 +51,15 @@
                     </td>
                 </tr>
                 <tr th:if="${records.empty}">
-                    <td class="empty-state" colspan="4">No enrollment records yet. Add an enrollment after adding a student and course.</td>
+                    <td class="empty-state" colspan="4"
+                        th:text="${#strings.isEmpty(query) ? 'No enrollment records yet. Add an enrollment after adding a student and course.' : 'No enrollments match your search.'}">
+                        No enrollment records yet.
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div th:replace="~{fragments :: pagination(${records}, '/enrollments')}"></div>
+        <div th:replace="~{fragments :: pagination(${records}, '/enrollments', ${query})}"></div>
     </main>
 </div>
 </body>

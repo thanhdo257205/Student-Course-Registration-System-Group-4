@@ -56,6 +56,14 @@ mvn spring-boot:run
 
 Open http://localhost:8080 to check that it works.
 
+## Record management
+
+The home page links to separate student, course, and enrollment lists. Each list
+shows up to 10 records per page and supports searching. Student lists search
+names and email addresses, course lists search course and instructor names, and
+enrollment lists search student names, student emails, course names, and
+instructor names.
+
 ## Project structure
 
 ```

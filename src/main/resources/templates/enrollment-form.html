@@ -36,7 +36,8 @@
             </div>
             <div class="field">
                 <label for="enrollmentDate">Enrollment date</label>
-                <input id="enrollmentDate" type="date" th:field="*{enrollmentDate}"
+                <input id="enrollmentDate" name="enrollmentDate" type="date"
+                       th:value="${enrollmentForm.enrollmentDate}"
                        th:attr="max=${today}" required>
                 <p class="field-error" th:if="${#fields.hasErrors('enrollmentDate')}" th:errors="*{enrollmentDate}"></p>
             </div>

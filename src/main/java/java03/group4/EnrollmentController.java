@@ -31,13 +31,18 @@ public class EnrollmentController {
     }
 
     @GetMapping("/enrollments")
-    public String listEnrollments(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String listEnrollments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "") String q,
+            Model model) {
+        String query = q.trim();
         model.addAttribute(
                 "records",
                 RecordPageSupport.load(
-                        enrollmentRepository::findAll,
+                        pageable -> enrollmentRepository.search(query, pageable),
                         page,
                         Sort.by("enrollmentDate").descending().and(Sort.by("enrollmentId").descending())));
+        model.addAttribute("query", query);
         return "enrollments";
     }
 

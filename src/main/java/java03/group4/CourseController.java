@@ -27,9 +27,13 @@ public class CourseController {
     }
 
     @GetMapping("/courses")
-    public String listCourses(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String listCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "") String q,
+            Model model) {
+        String query = q.trim();
         var courses = RecordPageSupport.load(
-                courseRepository::findAll,
+                pageable -> courseRepository.search(query, pageable),
                 page,
                 Sort.by("courseName").ascending().and(Sort.by("courseId").ascending()));
         Map<Integer, Long> enrollmentCounts = courses.isEmpty()
@@ -42,6 +46,7 @@ public class CourseController {
                                 CourseEnrollmentSummary::getEnrollmentCount));
         model.addAttribute("records", courses);
         model.addAttribute("enrollmentCounts", enrollmentCounts);
+        model.addAttribute("query", query);
         return "courses";
     }
 

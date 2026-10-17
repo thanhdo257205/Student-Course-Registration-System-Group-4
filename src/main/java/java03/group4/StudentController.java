@@ -26,13 +26,18 @@ public class StudentController {
     }
 
     @GetMapping("/students")
-    public String listStudents(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String listStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "") String q,
+            Model model) {
+        String query = q.trim();
         model.addAttribute(
                 "records",
                 RecordPageSupport.load(
-                        studentRepository::findAll,
+                        pageable -> studentRepository.search(query, pageable),
                         page,
                         Sort.by("fullName").ascending().and(Sort.by("studentId").ascending())));
+        model.addAttribute("query", query);
         return "students";
     }
 
