@@ -26,6 +26,9 @@ git push -u origin your-branch-name
 2. Run the whole script. It creates the `student_course_db` database with 4 tables
    (`users`, `students`, `courses`, `enrollments`) and a sample account `admin / admin123`.
 
+> **Warning:** Running `docs/database.sql` drops and recreates `student_course_db` if it
+> already exists. All existing data in that database will be permanently deleted.
+
 ### Connection configuration
 
 `src/main/resources/application.properties` reads its settings from environment variables.
@@ -55,14 +58,6 @@ mvn spring-boot:run
 ```
 
 Open http://localhost:8080 to check that it works.
-
-## Record management
-
-The home page links to separate student, course, and enrollment lists. Each list
-shows up to 10 records per page and supports searching. Student lists search
-names and email addresses, course lists search course and instructor names, and
-enrollment lists search student names, student emails, course names, and
-instructor names.
 
 ## Project structure
 

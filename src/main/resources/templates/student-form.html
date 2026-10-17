@@ -25,7 +25,8 @@
             </div>
             <div class="field">
                 <label for="dateOfBirth">Date of birth</label>
-                <input id="dateOfBirth" type="date" th:field="*{dateOfBirth}" th:attr="max=${today}" required>
+                <input id="dateOfBirth" name="dateOfBirth" type="date"
+                       th:value="${studentForm.dateOfBirth}" th:attr="max=${today}" required>
                 <p class="field-error" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></p>
             </div>
             <div class="form-actions">

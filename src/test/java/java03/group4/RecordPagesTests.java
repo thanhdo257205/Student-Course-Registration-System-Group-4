@@ -118,6 +118,19 @@ class RecordPagesTests {
     }
 
     @Test
+    void studentEditFormShowsStoredDateOfBirth() throws Exception {
+        Student student = new Student("Minh Nguyen", "minh@example.edu", LocalDate.of(2004, 5, 12));
+        ReflectionTestUtils.setField(student, "studentId", 1);
+        when(studentRepository.findById(1)).thenReturn(java.util.Optional.of(student));
+
+        mockMvc.perform(get("/students/1/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("student-form"))
+                .andExpect(content().string(containsString("name=\"dateOfBirth\"")))
+                .andExpect(content().string(containsString("value=\"2004-05-12\"")));
+    }
+
+    @Test
     void studentAndCourseFormsRender() throws Exception {
         mockMvc.perform(get("/students/new"))
                 .andExpect(status().isOk())
