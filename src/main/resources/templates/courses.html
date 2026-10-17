@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav>
+        <a class="brand" th:href="@{/}">Course Registration</a>
+        <a th:href="@{/courses}" aria-current="page">Khóa học</a>
+    </nav>
+</header>
+<main>
+    <h1>Khóa học</h1>
+    <p class="muted">Chọn một khóa học để xem chi tiết và đăng ký cho sinh viên.</p>
+
+    <p class="notice" role="status" th:if="${message}" th:text="${message}"></p>
+
+    <form th:action="@{/courses}" method="get" role="search">
+        <div class="field">
+            <label for="q">Tìm theo tên khóa học hoặc giảng viên</label>
+            <div class="field-row">
+                <input id="q" name="q" type="search" th:value="${q}">
+                <button type="submit">Tìm</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr><th scope="col">Khóa học</th><th scope="col">Giảng viên</th><th scope="col">Đã đăng ký</th><th scope="col"><span class="muted">Thao tác</span></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${courses}" th:with="enrolled=${counts.getOrDefault(c.id, 0L)}">
+                <td><a th:href="@{/courses/{id}(id=${c.id})}" th:text="${c.courseName}"></a></td>
+                <td th:text="${c.instructorName}"></td>
+                <td class="num" th:text="|${enrolled} / ${c.capacity}|"></td>
+                <td class="action">
+                    <a class="button secondary" th:if="${enrolled < c.capacity}"
+                       th:href="@{/courses/{id}(id=${c.id})} + '#register'"
+                       th:attr="aria-label=|Đăng ký ${c.courseName}|">Đăng ký</a>
+                    <span class="status-full" th:unless="${enrolled < c.capacity}">Đã đủ chỗ</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="empty" th:if="${#lists.isEmpty(courses)}">
+            <p th:text="|Không có khóa học nào khớp với &quot;${q}&quot;.|"></p>
+            <a th:href="@{/courses}">Xem tất cả khóa học</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

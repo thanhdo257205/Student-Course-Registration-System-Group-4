@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${course.courseName}">Khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="site-header">
+    <nav>
+        <a class="brand" th:href="@{/}">Course Registration</a>
+        <a th:href="@{/courses}">Khóa học</a>
+    </nav>
+</header>
+<main>
+    <p><a th:href="@{/courses}">&larr; Quay lại danh sách</a></p>
+    <h1 th:text="${course.courseName}"></h1>
+    <p class="muted" th:text="|Giảng viên: ${course.instructorName}|"></p>
+
+    <p class="notice" role="status" th:if="${message}" th:text="${message}"></p>
+
+    <dl class="stats">
+        <div><dt>Sức chứa</dt><dd th:text="${course.capacity}"></dd></div>
+        <div><dt>Đã đăng ký</dt><dd th:text="${enrollments.size()}"></dd></div>
+        <div><dt>Còn trống</dt><dd th:text="${seatsLeft}"></dd></div>
+    </dl>
+
+    <div class="detail-grid">
+        <section aria-labelledby="roster-title">
+            <h2 id="roster-title">Sinh viên đã đăng ký</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr><th scope="col">Họ tên</th><th scope="col">Email</th><th scope="col">Ngày đăng ký</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="e : ${enrollments}">
+                        <td th:text="${e.student.fullName}"></td>
+                        <td th:text="${e.student.email}"></td>
+                        <td class="num" th:text="${#temporals.format(e.enrollmentDate, 'dd/MM/yyyy')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty" th:if="${enrollments.isEmpty()}">
+                    <p>Chưa có sinh viên nào đăng ký khóa học này.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="register" class="panel" aria-labelledby="register-title">
+            <h2 id="register-title">Đăng ký sinh viên</h2>
+            <p class="muted" th:if="${seatsLeft == 0}">Khóa học đã đủ chỗ.</p>
+            <p class="muted" th:if="${seatsLeft > 0 and students.isEmpty()}">Tất cả sinh viên đã đăng ký khóa học này.</p>
+            <form th:if="${seatsLeft > 0 and !students.isEmpty()}"
+                  th:action="@{/courses/{id}/register(id=${course.id})}" method="post">
+                <div class="field">
+                    <label for="studentId">Sinh viên</label>
+                    <select id="studentId" name="studentId" required
+                            th:attr="aria-invalid=${error != null}, aria-describedby=${error != null ? 'studentId-error' : null}">
+                        <option value="">Chọn sinh viên</option>
+                        <option th:each="s : ${students}" th:value="${s.id}" th:text="|${s.fullName} (${s.email})|"></option>
+                    </select>
+                    <p id="studentId-error" class="field-error" role="alert" th:if="${error}" th:text="${error}"></p>
+                </div>
+                <button type="submit" class="block">Đăng ký</button>
+            </form>
+        </section>
+    </div>
+</main>
+</body>
+</html>
