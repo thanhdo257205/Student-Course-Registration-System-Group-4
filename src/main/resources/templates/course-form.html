@@ -10,7 +10,7 @@
 <div class="page-shell">
     <div th:replace="~{fragments :: header}"></div>
     <main class="form-page">
-        <a class="back-link" th:href="@{/#courses}">Back to records</a>
+        <a class="back-link" th:href="@{/courses}">Back to courses</a>
         <h1 th:text="${formTitle}">Course record</h1>
         <form class="record-form" th:object="${courseForm}" th:action="${formAction}" method="post">
             <div class="field">
@@ -30,7 +30,7 @@
             </div>
             <div class="form-actions">
                 <button class="button button-primary" type="submit">Save course</button>
-                <a class="button button-quiet" th:href="@{/#courses}">Cancel</a>
+                <a class="button button-quiet" th:href="@{/courses}">Cancel</a>
             </div>
         </form>
     </main>

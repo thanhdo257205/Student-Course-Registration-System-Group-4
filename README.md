@@ -26,9 +26,6 @@ git push -u origin your-branch-name
 2. Run the whole script. It creates the `student_course_db` database with 4 tables
    (`users`, `students`, `courses`, `enrollments`) and a sample account `admin / admin123`.
 
-> **Warning:** Running `docs/database.sql` drops and recreates `student_course_db` if it
-> already exists. All existing data in that database will be permanently deleted.
-
 ### Connection configuration
 
 `src/main/resources/application.properties` reads its settings from environment variables.
@@ -59,18 +56,10 @@ mvn spring-boot:run
 
 Open http://localhost:8080 to check that it works.
 
-## Record management
-
-The home page provides create, read, update, and delete workflows for students,
-courses, and enrollments. Student email addresses must be unique. Enrollment
-records cannot duplicate a student-course pair or exceed a course's capacity.
-Students and courses with enrollments must have those enrollment records deleted
-before they can be deleted.
-
 ## Project structure
 
 ```
-src/main/java/java03/group4/      Java code (controllers, entities, forms, repositories)
+src/main/java/java03/group4/      Java code (controller, entity, repository, service)
 src/main/resources/templates/     Thymeleaf views
 src/main/resources/static/        CSS, JS
 docs/database.sql                 database creation script

@@ -2,12 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <header th:fragment="header" class="site-header">
-    <a class="brand" th:href="@{/}">Student records</a>
+    <a class="brand" th:href="@{/}">Course registration</a>
     <nav aria-label="Main navigation">
-        <a href="/#students">Students</a>
-        <a href="/#courses">Courses</a>
-        <a href="/#enrollments">Enrollments</a>
+        <a th:href="@{/students}">Students</a>
+        <a th:href="@{/courses}">Courses</a>
+        <a th:href="@{/enrollments}">Enrollments</a>
     </nav>
 </header>
+<nav th:fragment="pagination(records, basePath)" class="pagination" aria-label="Pagination"
+     th:if="${records.totalPages > 1}">
+    <a class="button button-secondary" th:if="${records.hasPrevious()}"
+       th:href="@{${basePath}(page=${records.number - 1})}">Previous</a>
+    <span th:text="|Page ${records.number + 1} of ${records.totalPages}|">Page 1 of 1</span>
+    <a class="button button-secondary" th:if="${records.hasNext()}"
+       th:href="@{${basePath}(page=${records.number + 1})}">Next</a>
+</nav>
 </body>
 </html>

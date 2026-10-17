@@ -3,6 +3,7 @@ package java03.group4;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -28,12 +30,23 @@ public class EnrollmentController {
         this.enrollmentRepository = enrollmentRepository;
     }
 
+    @GetMapping("/enrollments")
+    public String listEnrollments(@RequestParam(defaultValue = "0") int page, Model model) {
+        model.addAttribute(
+                "records",
+                RecordPageSupport.load(
+                        enrollmentRepository::findAll,
+                        page,
+                        Sort.by("enrollmentDate").descending().and(Sort.by("enrollmentId").descending())));
+        return "enrollments";
+    }
+
     @GetMapping("/enrollments/new")
     public String newEnrollment(Model model, RedirectAttributes redirectAttributes) {
         if (!prepareOptions(model)) {
             redirectAttributes.addFlashAttribute(
                     "errorMessage", "Add at least one student and one course before creating an enrollment.");
-            return "redirect:/";
+            return "redirect:/enrollments";
         }
         model.addAttribute("enrollmentForm", new EnrollmentForm(null, null, LocalDate.now()));
         model.addAttribute("today", LocalDate.now());
@@ -63,7 +76,7 @@ public class EnrollmentController {
 
         enrollmentRepository.save(new Enrollment(student.get(), course.get(), form.getEnrollmentDate()));
         redirectAttributes.addFlashAttribute("successMessage", "Enrollment record created.");
-        return "redirect:/";
+        return "redirect:/enrollments";
     }
 
     @GetMapping("/enrollments/{enrollmentId}/edit")
@@ -72,12 +85,12 @@ public class EnrollmentController {
         Optional<Enrollment> enrollment = enrollmentRepository.findById(enrollmentId);
         if (enrollment.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Enrollment record was not found.");
-            return "redirect:/";
+            return "redirect:/enrollments";
         }
         if (!prepareOptions(model)) {
             redirectAttributes.addFlashAttribute(
                     "errorMessage", "Add at least one student and one course before editing an enrollment.");
-            return "redirect:/";
+            return "redirect:/enrollments";
         }
 
         Enrollment record = enrollment.get();
@@ -103,7 +116,7 @@ public class EnrollmentController {
         Optional<Enrollment> enrollment = enrollmentRepository.findById(enrollmentId);
         if (enrollment.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Enrollment record was not found.");
-            return "redirect:/";
+            return "redirect:/enrollments";
         }
 
         Optional<Student> student = form.getStudentId() == null
@@ -125,7 +138,7 @@ public class EnrollmentController {
         record.setEnrollmentDate(form.getEnrollmentDate());
         enrollmentRepository.save(record);
         redirectAttributes.addFlashAttribute("successMessage", "Enrollment record updated.");
-        return "redirect:/";
+        return "redirect:/enrollments";
     }
 
     @PostMapping("/enrollments/{enrollmentId}/delete")
@@ -137,7 +150,7 @@ public class EnrollmentController {
             enrollmentRepository.delete(enrollment.get());
             redirectAttributes.addFlashAttribute("successMessage", "Enrollment record deleted.");
         }
-        return "redirect:/";
+        return "redirect:/enrollments";
     }
 
     private void validateEnrollment(

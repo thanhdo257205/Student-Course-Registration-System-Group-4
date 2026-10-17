@@ -3,6 +3,7 @@ package java03.group4;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -21,6 +23,17 @@ public class StudentController {
     public StudentController(StudentRepository studentRepository, EnrollmentRepository enrollmentRepository) {
         this.studentRepository = studentRepository;
         this.enrollmentRepository = enrollmentRepository;
+    }
+
+    @GetMapping("/students")
+    public String listStudents(@RequestParam(defaultValue = "0") int page, Model model) {
+        model.addAttribute(
+                "records",
+                RecordPageSupport.load(
+                        studentRepository::findAll,
+                        page,
+                        Sort.by("fullName").ascending().and(Sort.by("studentId").ascending())));
+        return "students";
     }
 
     @GetMapping("/students/new")
@@ -48,7 +61,7 @@ public class StudentController {
 
         studentRepository.save(new Student(form.getFullName().trim(), form.getEmail().trim(), form.getDateOfBirth()));
         redirectAttributes.addFlashAttribute("successMessage", "Student record created.");
-        return "redirect:/";
+        return "redirect:/students";
     }
 
     @GetMapping("/students/{studentId}/edit")
@@ -56,7 +69,7 @@ public class StudentController {
         Optional<Student> student = studentRepository.findById(studentId);
         if (student.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Student record was not found.");
-            return "redirect:/";
+            return "redirect:/students";
         }
 
         Student record = student.get();
@@ -77,7 +90,7 @@ public class StudentController {
         Optional<Student> student = studentRepository.findById(studentId);
         if (student.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Student record was not found.");
-            return "redirect:/";
+            return "redirect:/students";
         }
         if (form.getEmail() != null
                 && studentRepository.existsByEmailIgnoreCaseAndStudentIdNot(form.getEmail().trim(), studentId)) {
@@ -94,7 +107,7 @@ public class StudentController {
         record.setDateOfBirth(form.getDateOfBirth());
         studentRepository.save(record);
         redirectAttributes.addFlashAttribute("successMessage", "Student record updated.");
-        return "redirect:/";
+        return "redirect:/students";
     }
 
     @PostMapping("/students/{studentId}/delete")
@@ -109,7 +122,7 @@ public class StudentController {
             studentRepository.delete(student.get());
             redirectAttributes.addFlashAttribute("successMessage", "Student record deleted.");
         }
-        return "redirect:/";
+        return "redirect:/students";
     }
 
     private void prepareForm(Model model, String title, String action) {

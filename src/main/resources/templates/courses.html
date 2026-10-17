@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Courses | Course registration</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-shell">
+    <div th:replace="~{fragments :: header}"></div>
+    <main>
+        <div class="page-intro">
+            <div>
+                <a class="back-link" th:href="@{/}">All records</a>
+                <h1>Courses</h1>
+                <p class="intro-copy">Course details, instructors, enrollment, and capacity.</p>
+            </div>
+            <a class="button button-primary" th:href="@{/courses/new}">Add course</a>
+        </div>
+        <div th:if="${successMessage}" class="notice notice-success" role="status" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="notice notice-error" role="alert" th:text="${errorMessage}"></div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th scope="col">Course</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Enrolled</th>
+                    <th scope="col">Capacity</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="course : ${records.content}">
+                    <td data-label="Course" th:text="${course.courseName}"></td>
+                    <td data-label="Instructor" th:text="${course.instructorName}"></td>
+                    <td data-label="Enrolled"
+                        th:text="${enrollmentCounts[course.courseId] == null ? 0 : enrollmentCounts[course.courseId]}"></td>
+                    <td data-label="Capacity" th:text="${course.capacity}"></td>
+                    <td class="actions-cell">
+                        <a class="text-action" th:href="@{/courses/{id}/edit(id=${course.courseId})}">Edit</a>
+                        <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post"
+                              onsubmit="return confirm('Delete this course record?')">
+                            <button class="text-action text-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${records.empty}">
+                    <td class="empty-state" colspan="5">No course records yet. Add a course to get started.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments :: pagination(${records}, '/courses')}"></div>
+    </main>
+</div>
+</body>
+</html>

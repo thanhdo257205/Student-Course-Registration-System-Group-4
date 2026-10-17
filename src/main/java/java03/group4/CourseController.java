@@ -1,7 +1,10 @@
 package java03.group4;
 
 import jakarta.validation.Valid;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -20,6 +24,25 @@ public class CourseController {
     public CourseController(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
+    }
+
+    @GetMapping("/courses")
+    public String listCourses(@RequestParam(defaultValue = "0") int page, Model model) {
+        var courses = RecordPageSupport.load(
+                courseRepository::findAll,
+                page,
+                Sort.by("courseName").ascending().and(Sort.by("courseId").ascending()));
+        Map<Integer, Long> enrollmentCounts = courses.isEmpty()
+                ? Map.of()
+                : enrollmentRepository.countPerCourse(
+                                courses.getContent().stream().map(Course::getCourseId).toList())
+                        .stream()
+                        .collect(Collectors.toMap(
+                                CourseEnrollmentSummary::getCourseId,
+                                CourseEnrollmentSummary::getEnrollmentCount));
+        model.addAttribute("records", courses);
+        model.addAttribute("enrollmentCounts", enrollmentCounts);
+        return "courses";
     }
 
     @GetMapping("/courses/new")
@@ -43,7 +66,7 @@ public class CourseController {
 
         courseRepository.save(new Course(form.getCourseName().trim(), form.getInstructorName().trim(), form.getCapacity()));
         redirectAttributes.addFlashAttribute("successMessage", "Course record created.");
-        return "redirect:/";
+        return "redirect:/courses";
     }
 
     @GetMapping("/courses/{courseId}/edit")
@@ -51,7 +74,7 @@ public class CourseController {
         Optional<Course> course = courseRepository.findById(courseId);
         if (course.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Course record was not found.");
-            return "redirect:/";
+            return "redirect:/courses";
         }
 
         Course record = course.get();
@@ -71,7 +94,7 @@ public class CourseController {
         Optional<Course> course = courseRepository.findById(courseId);
         if (course.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Course record was not found.");
-            return "redirect:/";
+            return "redirect:/courses";
         }
         long enrollmentCount = enrollmentRepository.countByCourse_CourseId(courseId);
         if (form.getCapacity() != null && form.getCapacity() < enrollmentCount) {
@@ -89,7 +112,7 @@ public class CourseController {
         record.setCapacity(form.getCapacity());
         courseRepository.save(record);
         redirectAttributes.addFlashAttribute("successMessage", "Course record updated.");
-        return "redirect:/";
+        return "redirect:/courses";
     }
 
     @PostMapping("/courses/{courseId}/delete")
@@ -104,7 +127,7 @@ public class CourseController {
             courseRepository.delete(course.get());
             redirectAttributes.addFlashAttribute("successMessage", "Course record deleted.");
         }
-        return "redirect:/";
+        return "redirect:/courses";
     }
 
     private void prepareForm(Model model, String title, String action) {
