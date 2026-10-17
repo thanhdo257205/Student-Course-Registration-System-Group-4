@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${formTitle} + ' | Student records'">Enrollment record</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-shell">
+    <div th:replace="~{fragments :: header}"></div>
+    <main class="form-page">
+        <a class="back-link" th:href="@{/#enrollments}">Back to records</a>
+        <h1 th:text="${formTitle}">Enrollment record</h1>
+        <form class="record-form" th:object="${enrollmentForm}" th:action="${formAction}" method="post">
+            <div th:if="${optionMessage}" class="notice notice-error" role="alert" th:text="${optionMessage}"></div>
+            <div th:if="${#fields.hasGlobalErrors()}" class="notice notice-error" role="alert">
+                <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+            </div>
+            <div class="field">
+                <label for="studentId">Student</label>
+                <select id="studentId" th:field="*{studentId}" required>
+                    <option value="">Choose a student</option>
+                    <option th:each="student : ${students}" th:value="${student.studentId}" th:text="${student.fullName}"></option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('studentId')}" th:errors="*{studentId}"></p>
+            </div>
+            <div class="field">
+                <label for="courseId">Course</label>
+                <select id="courseId" th:field="*{courseId}" required>
+                    <option value="">Choose a course</option>
+                    <option th:each="course : ${courses}" th:value="${course.courseId}"
+                            th:text="${course.courseName + ' (capacity ' + course.capacity + ')'}"></option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('courseId')}" th:errors="*{courseId}"></p>
+            </div>
+            <div class="field">
+                <label for="enrollmentDate">Enrollment date</label>
+                <input id="enrollmentDate" type="date" th:field="*{enrollmentDate}"
+                       th:attr="max=${today}" required>
+                <p class="field-error" th:if="${#fields.hasErrors('enrollmentDate')}" th:errors="*{enrollmentDate}"></p>
+            </div>
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">Save enrollment</button>
+                <a class="button button-quiet" th:href="@{/#enrollments}">Cancel</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

@@ -59,10 +59,18 @@ mvn spring-boot:run
 
 Open http://localhost:8080 to check that it works.
 
+## Record management
+
+The home page provides create, read, update, and delete workflows for students,
+courses, and enrollments. Student email addresses must be unique. Enrollment
+records cannot duplicate a student-course pair or exceed a course's capacity.
+Students and courses with enrollments must have those enrollment records deleted
+before they can be deleted.
+
 ## Project structure
 
 ```
-src/main/java/java03/group4/      Java code (controller, entity, repository, service)
+src/main/java/java03/group4/      Java code (controllers, entities, forms, repositories)
 src/main/resources/templates/     Thymeleaf views
 src/main/resources/static/        CSS, JS
 docs/database.sql                 database creation script

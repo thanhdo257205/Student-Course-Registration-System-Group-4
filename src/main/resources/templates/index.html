@@ -1,15 +1,146 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student Course Registration System</title>
+    <title>Student records | Course registration</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<main>
-    <h1>Student Course Registration System</h1>
-    <p>Project da chay thanh cong. Bat dau code tu day.</p>
-</main>
+<div class="page-shell">
+    <div th:replace="~{fragments :: header}"></div>
+    <main>
+        <section class="page-intro">
+            <div>
+                <p class="eyebrow">Course registration system</p>
+                <h1>Student records</h1>
+                <p class="intro-copy">Manage students, courses, and course enrollments in one place.</p>
+            </div>
+            <a class="button button-primary" th:href="@{/enrollments/new}">Add enrollment</a>
+        </section>
+
+        <div th:if="${successMessage}" class="notice notice-success" role="status" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="notice notice-error" role="alert" th:text="${errorMessage}"></div>
+
+        <section class="record-section" id="students" aria-labelledby="students-heading">
+            <div class="section-heading">
+                <div>
+                    <h2 id="students-heading">Students</h2>
+                    <p>Student contact and date of birth records.</p>
+                </div>
+                <a class="button button-secondary" th:href="@{/students/new}">Add student</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Full name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Date of birth</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${students}">
+                        <td data-label="Full name" th:text="${student.fullName}"></td>
+                        <td data-label="Email" th:text="${student.email}"></td>
+                        <td data-label="Date of birth" th:text="${student.dateOfBirth}"></td>
+                        <td class="actions-cell">
+                            <a class="text-action" th:href="@{/students/{id}/edit(id=${student.studentId})}">Edit</a>
+                            <form th:action="@{/students/{id}/delete(id=${student.studentId})}" method="post"
+                                  onsubmit="return confirm('Delete this student record?')">
+                                <button class="text-action text-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(students)}">
+                        <td class="empty-state" colspan="4">No student records yet. Add a student to get started.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="record-section" id="courses" aria-labelledby="courses-heading">
+            <div class="section-heading">
+                <div>
+                    <h2 id="courses-heading">Courses</h2>
+                    <p>Course details, instructors, and available capacity.</p>
+                </div>
+                <a class="button button-secondary" th:href="@{/courses/new}">Add course</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Course</th>
+                        <th scope="col">Instructor</th>
+                        <th scope="col">Enrolled</th>
+                        <th scope="col">Capacity</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="course : ${courses}">
+                        <td data-label="Course" th:text="${course.courseName}"></td>
+                        <td data-label="Instructor" th:text="${course.instructorName}"></td>
+                        <td data-label="Enrolled" th:text="${courseEnrollmentCounts[course.courseId] == null ? 0 : courseEnrollmentCounts[course.courseId]}"></td>
+                        <td data-label="Capacity" th:text="${course.capacity}"></td>
+                        <td class="actions-cell">
+                            <a class="text-action" th:href="@{/courses/{id}/edit(id=${course.courseId})}">Edit</a>
+                            <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post"
+                                  onsubmit="return confirm('Delete this course record?')">
+                                <button class="text-action text-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(courses)}">
+                        <td class="empty-state" colspan="5">No course records yet. Add a course to get started.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="record-section" id="enrollments" aria-labelledby="enrollments-heading">
+            <div class="section-heading">
+                <div>
+                    <h2 id="enrollments-heading">Enrollments</h2>
+                    <p>Students registered for courses.</p>
+                </div>
+                <a class="button button-secondary" th:href="@{/enrollments/new}">Add enrollment</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">Student</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Enrollment date</th>
+                        <th scope="col"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="enrollment : ${enrollments}">
+                        <td data-label="Student" th:text="${enrollment.student.fullName}"></td>
+                        <td data-label="Course" th:text="${enrollment.course.courseName}"></td>
+                        <td data-label="Enrollment date" th:text="${enrollment.enrollmentDate}"></td>
+                        <td class="actions-cell">
+                            <a class="text-action" th:href="@{/enrollments/{id}/edit(id=${enrollment.enrollmentId})}">Edit</a>
+                            <form th:action="@{/enrollments/{id}/delete(id=${enrollment.enrollmentId})}" method="post"
+                                  onsubmit="return confirm('Delete this enrollment record?')">
+                                <button class="text-action text-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(enrollments)}">
+                        <td class="empty-state" colspan="4">No enrollment records yet. Add an enrollment after adding a student and course.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
 </body>
 </html>
