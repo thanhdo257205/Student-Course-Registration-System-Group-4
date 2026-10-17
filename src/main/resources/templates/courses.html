@@ -11,6 +11,13 @@
     <nav>
         <a class="brand" th:href="@{/}">Course Registration</a>
         <a th:href="@{/courses}" aria-current="page">Khóa học</a>
+        <div class="user-status" th:if="${session.currentUser != null}">
+            <span class="user-badge" th:text="${session.currentUser.username} + ' (' + ${session.currentUser.role} + ')'"></span>
+            <a th:href="@{/logout}">Sign out</a>
+        </div>
+        <div class="user-status" th:unless="${session.currentUser != null}">
+            <a th:href="@{/login}">Sign in</a>
+        </div>
     </nav>
 </header>
 <main>

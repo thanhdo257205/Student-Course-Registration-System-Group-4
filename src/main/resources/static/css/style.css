@@ -123,3 +123,276 @@ button.block { width: 100%; }
     .detail-grid { grid-template-columns: 1fr; }
     .detail-grid .panel { position: static; order: -1; }
 }
+
+/* ==========================================================================
+   AUTHENTICATION & LOGIN (theo Cloudflare Technical Minimalism - DESIGN.md)
+   ========================================================================== */
+
+.auth-wrapper {
+    min-height: calc(100vh - 65px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px 48px;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.auth-header {
+    margin-bottom: 24px;
+}
+
+.auth-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.auth-eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 1px;
+}
+
+.auth-title {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
+    margin: 0 0 8px;
+    color: var(--text);
+}
+
+.auth-subtitle {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Input password toggle */
+.password-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrap input {
+    width: 100%;
+    padding-right: 44px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 42px;
+    min-height: 42px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    transition: color var(--fast) var(--ease);
+}
+
+.password-toggle-btn:hover {
+    background: transparent;
+    border: none;
+    color: var(--text);
+}
+
+.password-toggle-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}
+
+.password-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.75;
+}
+
+/* Form options row (remember me + links) */
+.form-options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 20px;
+    font-size: 13px;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text);
+}
+
+.checkbox-label input[type="checkbox"] {
+    min-height: auto;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--primary-strong);
+    cursor: pointer;
+}
+
+/* Demo credentials callout */
+.demo-box {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.demo-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.demo-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: "Apercu Mono Pro", "Geist Mono", monospace;
+    border-radius: 2px;
+}
+
+.demo-fill-btn {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-size: 11px;
+    padding: 2px 8px;
+    min-height: 26px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.demo-fill-btn:hover {
+    background: var(--surface);
+    border-color: var(--text);
+}
+
+.demo-code {
+    font-family: "Apercu Mono Pro", "Geist Mono", monospace;
+    color: var(--text);
+    background: #f7f7f7;
+    padding: 2px 6px;
+    border-radius: 2px;
+}
+
+/* Alerts */
+.notice.error {
+    border-left-color: var(--error);
+    background: #fff8f8;
+    color: var(--error);
+}
+
+.notice.success {
+    border-left-color: #16a34a;
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+/* Button loading state */
+.button.is-loading,
+button.is-loading {
+    position: relative;
+    pointer-events: none;
+    color: transparent !important;
+}
+
+.button.is-loading::after,
+button.is-loading::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: calc(50% - 9px);
+    left: calc(50% - 9px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: auth-spin 0.6s linear infinite;
+}
+
+@keyframes auth-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Auth meta footer */
+.auth-meta {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.auth-meta a {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--border-strong);
+}
+
+.auth-meta a:hover {
+    color: var(--text);
+    text-decoration-color: var(--primary);
+}
+
+/* User status badge in header */
+.user-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.user-badge {
+    padding: 3px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
