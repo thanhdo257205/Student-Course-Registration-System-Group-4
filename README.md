@@ -52,6 +52,10 @@ export DB_PASSWORD="your_password"
 
 In IntelliJ: Run > Edit Configurations > Environment variables.
 
+On startup, `src/main/resources/schema.sql` safely adds the nullable `users.student_id`
+column and its relationship/index when upgrading an existing database. It does not
+drop tables or data. Hibernate continues to validate the resulting schema.
+
 ## Run the project
 
 ```bash
