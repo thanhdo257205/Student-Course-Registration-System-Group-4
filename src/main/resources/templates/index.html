@@ -7,9 +7,26 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<header class="site-header">
+    <nav>
+        <a class="brand" th:href="@{/}">Course Registration</a>
+        <a th:href="@{/courses}">Khóa học</a>
+        <div class="user-status" th:if="${session.currentUser != null}">
+            <span class="user-badge" th:text="${session.currentUser.username} + ' (' + ${session.currentUser.role} + ')'"></span>
+            <a th:href="@{/logout}">Sign out</a>
+        </div>
+        <div class="user-status" th:unless="${session.currentUser != null}">
+            <a th:href="@{/login}">Sign in</a>
+        </div>
+    </nav>
+</header>
 <main>
     <h1>Student Course Registration System</h1>
-    <p><a th:href="@{/courses}">Xem danh sach khoa hoc</a></p>
+    <p class="muted">Hệ thống quản lý sinh viên, học phần và đăng ký môn học trực tuyến.</p>
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <a class="button" th:href="@{/courses}">Xem danh sách khóa học</a>
+        <a class="button secondary" th:href="@{/login}" th:unless="${session.currentUser != null}">Sign in</a>
+    </div>
 </main>
 </body>
 </html>
