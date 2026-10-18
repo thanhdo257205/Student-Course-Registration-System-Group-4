@@ -26,10 +26,9 @@ public class LoginController {
                                 @RequestParam(value = "redirect", required = false) String redirect,
                                 HttpSession session,
                                 Model model) {
-        // If already signed in, redirect to courses list
         Object currentUser = session.getAttribute(AuthRestController.SESSION_USER_KEY);
-        if (currentUser instanceof User) {
-            return "redirect:/courses";
+        if (currentUser instanceof User user) {
+            return "redirect:" + user.getLandingPath();
         }
 
         if (logout != null) {
@@ -61,10 +60,10 @@ public class LoginController {
                 session.setMaxInactiveInterval(7 * 24 * 60 * 60);
             }
 
-            if (redirectUrl != null && !redirectUrl.isBlank() && redirectUrl.startsWith("/")) {
+            if (isAllowedRedirect(user, redirectUrl)) {
                 return "redirect:" + redirectUrl;
             }
-            return "redirect:/courses";
+            return "redirect:" + user.getLandingPath();
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("username", username);
@@ -80,5 +79,17 @@ public class LoginController {
         session.removeAttribute(AuthRestController.SESSION_USER_KEY);
         session.invalidate();
         return "redirect:/login?logout=true";
+    }
+
+    private boolean isAllowedRedirect(User user, String redirectUrl) {
+        if (redirectUrl == null || !redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) {
+            return false;
+        }
+        if (user.isStudent()) {
+            return redirectUrl.equals("/catalog") || redirectUrl.startsWith("/catalog/");
+        }
+        return user.isStaff() && (redirectUrl.equals("/students") || redirectUrl.startsWith("/students/")
+                || redirectUrl.equals("/courses") || redirectUrl.startsWith("/courses/")
+                || redirectUrl.equals("/enrollments") || redirectUrl.startsWith("/enrollments/"));
     }
 }

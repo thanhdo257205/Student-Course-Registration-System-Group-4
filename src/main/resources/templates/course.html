@@ -10,9 +10,9 @@
 <header class="site-header">
     <nav>
         <a class="brand" th:href="@{/}">Course Registration</a>
-        <a th:href="@{/courses}">Khóa học</a>
+        <a th:href="@{/catalog}">Browse courses</a>
         <div class="user-status" th:if="${session.currentUser != null}">
-            <span class="user-badge" th:text="${session.currentUser.username} + ' (' + ${session.currentUser.role} + ')'"></span>
+            <span class="user-badge" th:text="${session.currentUser.username + ' (' + session.currentUser.role + ')'}"></span>
             <a th:href="@{/logout}">Sign out</a>
         </div>
         <div class="user-status" th:unless="${session.currentUser != null}">
@@ -21,59 +21,29 @@
     </nav>
 </header>
 <main>
-    <p><a th:href="@{/courses}">&larr; Quay lại danh sách</a></p>
+    <p><a th:href="@{/catalog}">&larr; Back to courses</a></p>
     <h1 th:text="${course.courseName}"></h1>
-    <p class="muted" th:text="|Giảng viên: ${course.instructorName}|"></p>
+    <p class="muted" th:text="|Instructor: ${course.instructorName}|"></p>
 
     <p class="notice" role="status" th:if="${message}" th:text="${message}"></p>
+    <p class="notice error" role="alert" th:if="${error}" th:text="${error}"></p>
 
     <dl class="stats">
-        <div><dt>Sức chứa</dt><dd th:text="${course.capacity}"></dd></div>
-        <div><dt>Đã đăng ký</dt><dd th:text="${enrollments.size()}"></dd></div>
-        <div><dt>Còn trống</dt><dd th:text="${seatsLeft}"></dd></div>
+        <div><dt>Capacity</dt><dd th:text="${course.capacity}"></dd></div>
+        <div><dt>Enrolled</dt><dd th:text="${enrollmentCount}"></dd></div>
+        <div><dt>Seats left</dt><dd th:text="${seatsLeft}"></dd></div>
     </dl>
 
-    <div class="detail-grid">
-        <section aria-labelledby="roster-title">
-            <h2 id="roster-title">Sinh viên đã đăng ký</h2>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                    <tr><th scope="col">Họ tên</th><th scope="col">Email</th><th scope="col">Ngày đăng ký</th></tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="e : ${enrollments}">
-                        <td th:text="${e.student.fullName}"></td>
-                        <td th:text="${e.student.email}"></td>
-                        <td class="num" th:text="${#temporals.format(e.enrollmentDate, 'dd/MM/yyyy')}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="empty" th:if="${enrollments.isEmpty()}">
-                    <p>Chưa có sinh viên nào đăng ký khóa học này.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="register" class="panel" aria-labelledby="register-title">
-            <h2 id="register-title">Đăng ký sinh viên</h2>
-            <p class="muted" th:if="${seatsLeft == 0}">Khóa học đã đủ chỗ.</p>
-            <p class="muted" th:if="${seatsLeft > 0 and students.isEmpty()}">Tất cả sinh viên đã đăng ký khóa học này.</p>
-            <form th:if="${seatsLeft > 0 and !students.isEmpty()}"
-                  th:action="@{/courses/{id}/register(id=${course.id})}" method="post">
-                <div class="field">
-                    <label for="studentId">Sinh viên</label>
-                    <select id="studentId" name="studentId" required
-                            th:attr="aria-invalid=${error != null}, aria-describedby=${error != null ? 'studentId-error' : null}">
-                        <option value="">Chọn sinh viên</option>
-                        <option th:each="s : ${students}" th:value="${s.id}" th:text="|${s.fullName} (${s.email})|"></option>
-                    </select>
-                    <p id="studentId-error" class="field-error" role="alert" th:if="${error}" th:text="${error}"></p>
-                </div>
-                <button type="submit" class="block">Đăng ký</button>
-            </form>
-        </section>
-    </div>
+    <section id="register" class="panel" aria-labelledby="register-title">
+        <h2 id="register-title">Register for this course</h2>
+        <p class="muted" th:if="${seatsLeft == 0}">This course is full.</p>
+        <p class="muted" th:if="${!studentLinked}">Your account is not linked to a student record. Contact school staff.</p>
+        <p class="muted" th:if="${alreadyEnrolled}">You are already registered for this course.</p>
+        <form th:if="${seatsLeft > 0 and studentLinked and !alreadyEnrolled}"
+              th:action="@{/catalog/{id}/register(id=${course.id})}" method="post">
+            <button type="submit" class="block">Register</button>
+        </form>
+    </section>
 </main>
 </body>
 </html>

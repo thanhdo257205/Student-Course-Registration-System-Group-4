@@ -9,7 +9,7 @@ DECLARE @i INT = 1;
 WHILE @i <= 49
 BEGIN
     INSERT INTO users (username, password, role)
-    SELECT 'user' + CAST(@i AS VARCHAR), 'password123', CASE WHEN @i % 5 = 0 THEN 'ADMIN' ELSE 'USER' END
+    SELECT 'user' + CAST(@i AS VARCHAR), 'password123', 'STUDENT'
     WHERE NOT EXISTS (
         SELECT 1
         FROM users
@@ -116,6 +116,16 @@ BEGIN
     END
     SET @n = @n + 1;
 END
+GO
+
+-- Link each generated student account to its matching student record.
+UPDATE account
+SET account.role = 'STUDENT',
+    account.student_id = student.student_id
+FROM users AS account
+JOIN students AS student
+  ON student.email = 'student' + SUBSTRING(account.username, 5, 50) + '@student.edu.vn'
+WHERE account.username LIKE 'user[0-9]%';
 GO
 
 -- 4. Thêm tối đa 500 lượt đăng ký ngẫu nhiên cho các sinh viên và khóa học hiện có.

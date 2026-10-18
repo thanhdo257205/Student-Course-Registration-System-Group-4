@@ -48,7 +48,7 @@ public class AuthRestController {
             }
 
             return ResponseEntity.ok(
-                    LoginResponse.ok("Signed in successfully.", user.getUsername(), user.getRole(), "/courses")
+                    LoginResponse.ok("Signed in successfully.", user.getUsername(), user.getRole(), user.getLandingPath())
             );
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

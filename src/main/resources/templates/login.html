@@ -11,7 +11,6 @@
 <header class="site-header">
     <nav>
         <a class="brand" th:href="@{/}">Course Registration</a>
-        <a th:href="@{/courses}">Courses</a>
         <a th:href="@{/login}" aria-current="page">Sign in</a>
     </nav>
 </header>
@@ -92,14 +91,13 @@
                         <span>Demo Account</span>
                         <button type="button" id="quickFillBtn" class="demo-fill-btn">Quick Fill</button>
                     </div>
-                    <div>Username: <code class="demo-code">admin</code></div>
-                    <div>Password: <code class="demo-code">admin123</code> <span class="demo-badge">ADMIN</span></div>
+                    <div>Admin: <code class="demo-code">admin / admin123</code></div>
+                    <div>School staff: <code class="demo-code">schoolstaff / staff123</code></div>
+                    <div>Student: <code class="demo-code">student / student123</code></div>
+                    <div class="muted">Additional student accounts are created by docs/mockData.sql.</div>
                 </div>
             </form>
 
-            <div class="auth-meta">
-                <p>Guest user? <a th:href="@{/courses}">Browse course catalog &rarr;</a></p>
-            </div>
         </div>
     </div>
 </main>

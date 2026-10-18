@@ -40,6 +40,9 @@ public class AuthService {
         if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("Invalid username or password.");
         }
+        if (!user.isStudent() && !user.isStaff()) {
+            throw new IllegalArgumentException("This account does not have an application role.");
+        }
 
         return user;
     }

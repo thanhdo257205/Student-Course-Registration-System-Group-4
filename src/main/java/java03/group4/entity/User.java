@@ -20,6 +20,9 @@ public class User {
     @Column(nullable = false, length = 20)
     private String role = "ADMIN";
 
+    @Column(name = "student_id")
+    private Integer studentId;
+
     public User() {
     }
 
@@ -59,5 +62,27 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+    }
+
+    public boolean isStudent() {
+        return "STUDENT".equalsIgnoreCase(role) || "USER".equalsIgnoreCase(role);
+    }
+
+    public boolean isStaff() {
+        return "ADMIN".equalsIgnoreCase(role)
+                || "SCHOOL_STAFF".equalsIgnoreCase(role)
+                || "STAFF".equalsIgnoreCase(role);
+    }
+
+    public String getLandingPath() {
+        return isStudent() ? "/catalog" : "/students";
     }
 }

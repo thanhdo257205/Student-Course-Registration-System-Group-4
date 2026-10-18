@@ -24,7 +24,8 @@ git push -u origin your-branch-name
 
 1. Open `docs/database.sql` in SSMS / Azure Data Studio.
 2. Run the whole script. It creates the `student_course_db` database with 4 tables
-   (`users`, `students`, `courses`, `enrollments`) and a sample account `admin / admin123`.
+   (`users`, `students`, `courses`, `enrollments`) and sample accounts for an administrator,
+   school staff member, and student. Student logins are linked to a student record.
 
 > **Warning:** Running `docs/database.sql` drops and recreates `student_course_db` if it
 > already exists. All existing data in that database will be permanently deleted.
@@ -58,6 +59,17 @@ mvn spring-boot:run
 ```
 
 Open http://localhost:8080 to check that it works.
+
+The app requires a login. Use one of the accounts created by `docs/database.sql`:
+
+| Role | Username | Password | Access |
+|------|----------|----------|--------|
+| Administrator | `admin` | `admin123` | Manage student, course, and enrollment records |
+| School staff | `schoolstaff` | `staff123` | Manage student, course, and enrollment records |
+| Student | `student` | `student123` | Browse and register for courses |
+
+Run `docs/mockData.sql` after the database setup to add linked test student accounts
+(`user1` through `user49`, password `password123`).
 
 ## Project structure
 
