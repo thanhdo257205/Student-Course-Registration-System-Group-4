@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 public interface RecordCourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("""
-            select c from Course c
+            select c from RecordCourse c
             where :query = ''
                or lower(c.courseName) like lower(concat('%', :query, '%'))
                or lower(c.instructorName) like lower(concat('%', :query, '%'))

@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 
-@Entity
+@Entity(name = "RecordEnrollment")
 @Table(name = "enrollments")
 public class Enrollment {
 

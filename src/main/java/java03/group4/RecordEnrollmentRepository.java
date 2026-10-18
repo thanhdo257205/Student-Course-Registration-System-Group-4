@@ -11,7 +11,7 @@ public interface RecordEnrollmentRepository extends JpaRepository<Enrollment, In
 
     @Query(
             value = """
-                    select e from Enrollment e
+                    select e from RecordEnrollment e
                     join fetch e.student
                     join fetch e.course
                     where :query = ''
@@ -21,7 +21,7 @@ public interface RecordEnrollmentRepository extends JpaRepository<Enrollment, In
                        or lower(e.course.instructorName) like lower(concat('%', :query, '%'))
                     """,
             countQuery = """
-                    select count(e) from Enrollment e
+                    select count(e) from RecordEnrollment e
                     where :query = ''
                        or lower(e.student.fullName) like lower(concat('%', :query, '%'))
                        or lower(e.student.email) like lower(concat('%', :query, '%'))
@@ -43,7 +43,7 @@ public interface RecordEnrollmentRepository extends JpaRepository<Enrollment, In
 
     @Query("""
             select e.course.courseId as courseId, count(e) as enrollmentCount
-            from Enrollment e
+            from RecordEnrollment e
             where e.course.courseId in :courseIds
             group by e.course.courseId
             """)
