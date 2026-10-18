@@ -1,7 +1,5 @@
-IF COL_LENGTH('dbo.users', 'student_id') IS NULL
-BEGIN
-    ALTER TABLE dbo.users ADD student_id INT NULL;
-END;
+IF COL_LENGTH(N'dbo.users', N'student_id') IS NULL
+    EXEC(N'ALTER TABLE dbo.users ADD student_id INT NULL');
 
 IF NOT EXISTS (
     SELECT 1
@@ -9,10 +7,8 @@ IF NOT EXISTS (
     WHERE name = 'fk_users_student'
       AND parent_object_id = OBJECT_ID('dbo.users')
 )
-BEGIN
-    ALTER TABLE dbo.users
-        ADD CONSTRAINT fk_users_student FOREIGN KEY (student_id) REFERENCES dbo.students(student_id);
-END;
+    EXEC(N'ALTER TABLE dbo.users
+        ADD CONSTRAINT fk_users_student FOREIGN KEY (student_id) REFERENCES dbo.students(student_id)');
 
 IF NOT EXISTS (
     SELECT 1
@@ -20,6 +16,4 @@ IF NOT EXISTS (
     WHERE name = 'ux_users_student_id'
       AND object_id = OBJECT_ID('dbo.users')
 )
-BEGIN
-    CREATE UNIQUE INDEX ux_users_student_id ON dbo.users(student_id) WHERE student_id IS NOT NULL;
-END;
+    EXEC(N'CREATE UNIQUE INDEX ux_users_student_id ON dbo.users(student_id) WHERE student_id IS NOT NULL');
