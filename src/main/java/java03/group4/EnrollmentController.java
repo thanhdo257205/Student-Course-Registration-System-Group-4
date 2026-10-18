@@ -17,14 +17,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class EnrollmentController {
 
-    private final StudentRepository studentRepository;
-    private final CourseRepository courseRepository;
-    private final EnrollmentRepository enrollmentRepository;
+    private final RecordStudentRepository studentRepository;
+    private final RecordCourseRepository courseRepository;
+    private final RecordEnrollmentRepository enrollmentRepository;
 
     public EnrollmentController(
-            StudentRepository studentRepository,
-            CourseRepository courseRepository,
-            EnrollmentRepository enrollmentRepository) {
+            RecordStudentRepository studentRepository,
+            RecordCourseRepository courseRepository,
+            RecordEnrollmentRepository enrollmentRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;

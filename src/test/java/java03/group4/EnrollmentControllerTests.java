@@ -20,9 +20,9 @@ class EnrollmentControllerTests {
 
     @Test
     void rejectsEnrollmentWhenCourseIsAtCapacity() {
-        StudentRepository students = mock(StudentRepository.class);
-        CourseRepository courses = mock(CourseRepository.class);
-        EnrollmentRepository enrollments = mock(EnrollmentRepository.class);
+        RecordStudentRepository students = mock(RecordStudentRepository.class);
+        RecordCourseRepository courses = mock(RecordCourseRepository.class);
+        RecordEnrollmentRepository enrollments = mock(RecordEnrollmentRepository.class);
         Student student = new Student("Minh Nguyen", "minh@example.edu", LocalDate.of(2004, 5, 12));
         Course course = new Course("Algorithms", "Lan Pham", 1);
         EnrollmentForm form = new EnrollmentForm(1, 2, LocalDate.now());
@@ -44,9 +44,9 @@ class EnrollmentControllerTests {
 
     @Test
     void rejectsDuplicateStudentAndCoursePair() {
-        StudentRepository students = mock(StudentRepository.class);
-        CourseRepository courses = mock(CourseRepository.class);
-        EnrollmentRepository enrollments = mock(EnrollmentRepository.class);
+        RecordStudentRepository students = mock(RecordStudentRepository.class);
+        RecordCourseRepository courses = mock(RecordCourseRepository.class);
+        RecordEnrollmentRepository enrollments = mock(RecordEnrollmentRepository.class);
         Student student = new Student("Minh Nguyen", "minh@example.edu", LocalDate.of(2004, 5, 12));
         Course course = new Course("Algorithms", "Lan Pham", 4);
         EnrollmentForm form = new EnrollmentForm(1, 2, LocalDate.now());

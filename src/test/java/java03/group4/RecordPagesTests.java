@@ -34,13 +34,13 @@ class RecordPagesTests {
     private MockMvc mockMvc;
 
     @MockBean
-    private StudentRepository studentRepository;
+    private RecordStudentRepository studentRepository;
 
     @MockBean
-    private CourseRepository courseRepository;
+    private RecordCourseRepository courseRepository;
 
     @MockBean
-    private EnrollmentRepository enrollmentRepository;
+    private RecordEnrollmentRepository enrollmentRepository;
 
     @MockBean
     private UserRepository userRepository;
