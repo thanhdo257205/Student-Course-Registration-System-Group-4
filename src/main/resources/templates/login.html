@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in - Student Course Registration System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="site-header">
+    <nav>
+        <a class="brand" th:href="@{/}">Course Registration</a>
+        <a th:href="@{/login}" aria-current="page">Sign in</a>
+    </nav>
+</header>
+
+<main class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-eyebrow">Course Registration System</div>
+                <h1 class="auth-title">Sign in</h1>
+                <p class="auth-subtitle">Enter your account credentials to access course registration and management.</p>
+            </div>
+
+            <!-- Response notification banner (Thymeleaf flash or REST API JS) -->
+            <div id="alertBox" class="notice" role="alert" th:if="${error != null or logoutMessage != null}"
+                 th:classappend="${error != null ? 'error' : (logoutMessage != null ? 'success' : '')}"
+                 th:text="${error != null ? error : logoutMessage}">
+            </div>
+
+            <form id="loginForm" th:action="@{/login}" method="post" novalidate>
+                <input type="hidden" id="redirectUrl" name="redirectUrl" th:value="${redirectUrl}">
+
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input id="username"
+                           name="username"
+                           type="text"
+                           required
+                           autofocus
+                           autocomplete="username"
+                           spellcheck="false"
+                           placeholder="Enter username (e.g. admin)"
+                           th:value="${username}">
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrap">
+                        <input id="password"
+                               name="password"
+                               type="password"
+                               required
+                               autocomplete="current-password"
+                               placeholder="Enter password">
+                        <button type="button"
+                                id="togglePasswordBtn"
+                                class="password-toggle-btn"
+                                aria-label="Show password"
+                                title="Show password">
+                            <!-- Eye Icon (Default) -->
+                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <!-- Eye Off Icon (Hidden) -->
+                            <svg id="eyeOffIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="display: none;">
+                                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                                <line x1="2" y1="2" x2="22" y2="22"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options-row">
+                    <label class="checkbox-label" for="rememberMe">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" value="true">
+                        <span>Remember session</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="submitBtn" class="button block">Sign in</button>
+
+                <!-- Demo credentials callout box -->
+                <div class="demo-box">
+                    <div class="demo-box-header">
+                        <span>Demo Account</span>
+                        <button type="button" id="quickFillBtn" class="demo-fill-btn">Quick Fill</button>
+                    </div>
+                    <div>Admin: <code class="demo-code">admin / admin123</code></div>
+                    <div>School staff: <code class="demo-code">schoolstaff / staff123</code></div>
+                    <div>Student (Nguyễn Văn Minh): <code class="demo-code">minh.nguyen / minh123</code></div>
+                    <div class="muted">Additional student accounts are created by docs/mockData.sql.</div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const rememberMeInput = document.getElementById("rememberMe");
+        const redirectUrlInput = document.getElementById("redirectUrl");
+        const submitBtn = document.getElementById("submitBtn");
+        const alertBox = document.getElementById("alertBox") || createAlertBox();
+        const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+        const eyeIcon = document.getElementById("eyeIcon");
+        const eyeOffIcon = document.getElementById("eyeOffIcon");
+        const quickFillBtn = document.getElementById("quickFillBtn");
+
+        function createAlertBox() {
+            const box = document.createElement("div");
+            box.id = "alertBox";
+            box.className = "notice";
+            box.setAttribute("role", "alert");
+            box.style.display = "none";
+            const form = document.getElementById("loginForm");
+            form.parentNode.insertBefore(box, form);
+            return box;
+        }
+
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = "notice " + (type === "error" ? "error" : "success");
+            alertBox.style.display = "block";
+        }
+
+        function hideAlert() {
+            alertBox.style.display = "none";
+            alertBox.textContent = "";
+        }
+
+        // Toggle show / hide password
+        if (togglePasswordBtn) {
+            togglePasswordBtn.addEventListener("click", function () {
+                const isPassword = passwordInput.getAttribute("type") === "password";
+                if (isPassword) {
+                    passwordInput.setAttribute("type", "text");
+                    eyeIcon.style.display = "none";
+                    eyeOffIcon.style.display = "block";
+                    togglePasswordBtn.setAttribute("aria-label", "Hide password");
+                    togglePasswordBtn.setAttribute("title", "Hide password");
+                } else {
+                    passwordInput.setAttribute("type", "password");
+                    eyeIcon.style.display = "block";
+                    eyeOffIcon.style.display = "none";
+                    togglePasswordBtn.setAttribute("aria-label", "Show password");
+                    togglePasswordBtn.setAttribute("title", "Show password");
+                }
+            });
+        }
+
+        // Quick fill demo credentials
+        if (quickFillBtn) {
+            quickFillBtn.addEventListener("click", function () {
+                usernameInput.value = "admin";
+                passwordInput.value = "admin123";
+                hideAlert();
+                passwordInput.focus();
+            });
+        }
+
+        // Handle sign in via RESTful API (/api/auth/login)
+        loginForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            hideAlert();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const rememberMe = rememberMeInput.checked;
+            const redirectUrl = redirectUrlInput ? redirectUrlInput.value : "";
+
+            if (!username) {
+                showAlert("Please enter your username.", "error");
+                usernameInput.focus();
+                return;
+            }
+
+            if (!password) {
+                showAlert("Please enter your password.", "error");
+                passwordInput.focus();
+                return;
+            }
+
+            // Set loading state
+            submitBtn.classList.add("is-loading");
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        rememberMe: rememberMe
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showAlert("Signed in successfully! Redirecting...", "success");
+                    
+                    setTimeout(function () {
+                        if (redirectUrl && redirectUrl.startsWith("/")) {
+                            window.location.href = redirectUrl;
+                        } else if (data.redirectUrl) {
+                            window.location.href = data.redirectUrl;
+                        } else {
+                            window.location.href = "/courses";
+                        }
+                    }, 400);
+                } else {
+                    submitBtn.classList.remove("is-loading");
+                    submitBtn.disabled = false;
+                    showAlert(data.message || "Invalid username or password.", "error");
+                    passwordInput.select();
+                }
+            } catch (err) {
+                // Fallback if REST API connection fails: standard form submit
+                console.warn("REST API request failed, falling back to form submit:", err);
+                submitBtn.classList.remove("is-loading");
+                submitBtn.disabled = false;
+                loginForm.submit();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

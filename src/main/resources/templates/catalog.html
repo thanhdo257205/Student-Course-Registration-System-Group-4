@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse courses | Course registration</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-shell">
+<div th:replace="~{fragments :: header}"></div>
+<main>
+    <h1>Browse courses</h1>
+    <p class="muted">Find a course and register using your student account.</p>
+
+    <p class="notice" role="status" th:if="${message}" th:text="${message}"></p>
+    <p class="notice" role="alert" th:if="${error}" th:text="${error}"></p>
+
+    <form th:action="@{/catalog}" method="get" role="search">
+        <div class="field">
+            <label for="q">Search by course or instructor</label>
+            <div class="field-row">
+                <input id="q" name="q" type="search" th:value="${q}">
+                <button type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th scope="col">Course</th>
+                <th scope="col">Instructor</th>
+                <th scope="col">Enrolled</th>
+                <th scope="col">Available</th>
+                <th scope="col"><span class="muted">Action</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="course : ${courses}"
+                th:with="enrolled=${counts.getOrDefault(course.courseId, 0L)}">
+                <td><a th:href="@{/catalog/{id}(id=${course.courseId})}" th:text="${course.courseName}"></a></td>
+                <td th:text="${course.instructorName}"></td>
+                <td class="num" th:text="|${enrolled} / ${course.capacity}|"></td>
+                <td th:text="${course.capacity - enrolled}"></td>
+                <td class="action">
+                    <a class="status-registered" th:if="${registeredCourseIds.contains(course.courseId)}"
+                       th:href="@{/catalog/{id}(id=${course.courseId})}">&#10003; Registered</a>
+                    <th:block th:unless="${registeredCourseIds.contains(course.courseId)}">
+                        <a class="button secondary" th:if="${enrolled < course.capacity}"
+                           th:href="@{/catalog/{id}(id=${course.courseId})} + '#register'">Register</a>
+                        <span class="status-full" th:unless="${enrolled < course.capacity}">Full</span>
+                    </th:block>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(courses)}">
+                <td class="empty" colspan="5">No courses match your search.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</div>
+</body>
+</html>

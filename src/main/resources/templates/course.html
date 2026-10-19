@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${course.courseName}">Khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-shell">
+<div th:replace="~{fragments :: header}"></div>
+<main>
+    <p><a th:href="@{/catalog}">&larr; Back to courses</a></p>
+    <h1 th:text="${course.courseName}"></h1>
+    <p class="muted" th:text="|Instructor: ${course.instructorName}|"></p>
+
+    <p class="notice" role="status" th:if="${message}" th:text="${message}"></p>
+    <p class="notice error" role="alert" th:if="${error}" th:text="${error}"></p>
+
+    <dl class="stats">
+        <div><dt>Capacity</dt><dd th:text="${course.capacity}"></dd></div>
+        <div><dt>Enrolled</dt><dd th:text="${enrollmentCount}"></dd></div>
+        <div><dt>Seats left</dt><dd th:text="${seatsLeft}"></dd></div>
+    </dl>
+
+    <section id="register" class="panel" aria-labelledby="register-title">
+        <h2 id="register-title">Register for this course</h2>
+        <p class="muted" th:if="${seatsLeft == 0}">This course is full.</p>
+        <p class="muted" th:if="${!studentLinked}">Your account is not linked to a student record. Contact school staff.</p>
+        <p class="muted" th:if="${alreadyEnrolled}">You are already registered for this course.</p>
+        <form th:if="${seatsLeft > 0 and studentLinked and !alreadyEnrolled}"
+              th:action="@{/catalog/{id}/register(id=${course.courseId})}" method="post">
+            <button type="submit" class="block">Register</button>
+        </form>
+    </section>
+</main>
+</div>
+</body>
+</html>

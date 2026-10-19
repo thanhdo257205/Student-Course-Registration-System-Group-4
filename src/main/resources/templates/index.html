@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Course Registration System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-shell">
+    <div th:replace="~{fragments :: header}"></div>
+    <main class="home-page">
+        <h1>Records</h1>
+        <nav class="record-links" aria-label="Record types">
+            <a th:href="@{/students}">Students</a>
+            <a th:href="@{/courses}">Courses</a>
+            <a th:href="@{/enrollments}">Enrollments</a>
+        </nav>
+    </main>
+</div>
+</body>
+</html>
